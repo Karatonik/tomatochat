@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { concatMap } from 'rxjs';
 import { ProfileUser } from 'src/app/models/user-profile';
 import { AuthenticationService } from 'src/app/services/authentication.service';
-import { ImageUploadService } from 'src/app/services/image-upload.service';
+import { MediaUploadService } from 'src/app/services/media-upload.service';
 import { UsersService } from 'src/app/services/users.service';
 
 @UntilDestroy()
@@ -29,7 +29,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private authService: AuthenticationService,
-    private imageUploadService: ImageUploadService,
+    private imageUploadService: MediaUploadService,
     private toast: HotToastService,
     private usersService: UsersService
   ) {}

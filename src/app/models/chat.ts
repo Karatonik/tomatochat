@@ -15,6 +15,8 @@ export interface Chat {
 
 export interface Message {
   text: string;
+  type: string;
+  src: string;
   senderId: string;
   sentDate: Date & Timestamp;
 }

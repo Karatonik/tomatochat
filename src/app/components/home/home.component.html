@@ -1,6 +1,9 @@
 <div class="container">
-  <div class="chat-list mat-elevation-z5">
-    <div class="search-input">
+  <div [hidden]="hiddenMenu" class="chat-list mat-elevation-z5">
+    <div [hidden]="!mobileFlag" style="position: relative;">
+      <button style="position: absolute; top:10px;left: 90%;border-radius: 50%;z-index: 1" (click)="changeState()"> <mat-icon>expand_more</mat-icon></button>
+    </div>
+    <div style="margin-top: 12px" class="search-input">
       <mat-form-field>
         <input
           matInput
@@ -21,7 +24,7 @@
     </div>
     <mat-selection-list [multiple]="false" [formControl]="chatListControl">
       <mat-divider></mat-divider>
-      <mat-list-option *ngFor="let chat of myChats$ | async" [value]="chat.id">
+      <mat-list-option (click)="changeState()" *ngFor="let chat of myChats$ | async" [value]="chat.id">
         <img
           matListAvatar
           [src]="
@@ -39,7 +42,10 @@
       </mat-list-option>
     </mat-selection-list>
   </div>
-  <div class="messages mat-elevation-z5">
+  <div [hidden]="hiddenMessage" class="messages mat-elevation-z5">
+    <div [hidden]="!mobileFlag" style="position: relative">
+      <button style="position: absolute; top:-16px;left: 92%;border-radius: 50%;" (click)="changeState()"> <mat-icon>expand_more</mat-icon></button>
+    </div>
     <div
       class="messages-header"
       *ngIf="selectedChat$ | async as selectedChat; else noChatSelected"
@@ -65,9 +71,14 @@
             [ngClass]="{ sender: message.senderId === currentUser.uid }"
             *ngFor="let message of messages"
           >
-            <div class="chat-bubble">
+            <div class="chat_img" *ngIf="message.type =='image'">
+              <a href="{{message.src}}"><button mat-icon-button style="position: relative;top:-50%; margin-right:16px"><mat-icon>menu</mat-icon></button></a>
+              <img  width="240px" src="{{message.src}}">
+            </div>
+            <br>
+            <div class="chat-bubble " >
               {{ message.text }}
-              <span class="chat-time">{{
+              <span class="chat-time" >{{
                 message.sentDate | dateDisplay
               }}</span>
             </div>
@@ -77,6 +88,7 @@
       <div #endOfChat></div>
     </div>
     <div class="input-area">
+        <input type="file" (change)="uploadImage($event)" />
       <mat-form-field appearance="outline">
         <input
           matInput

@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "eb09c3a6-da11-48dd-990a-d3c7f6dc0207"
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -74,6 +77,10 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "latest-angular:build",
+            "port": 8080
+          },
           "configurations": {
             "production": {
               "browserTarget": "angular-chat-app:build:production"

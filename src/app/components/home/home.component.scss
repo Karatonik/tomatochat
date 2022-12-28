@@ -3,6 +3,9 @@
     height: calc(100vh - 70px);
 
     > .chat-list {
+      @media only screen and (max-width: 900px) {
+        width: 100%;
+      }
         width: 40%;
         margin: 16px;
         background: #c5cae9;
@@ -21,7 +24,7 @@
                 font-size: 0.7rem;
                 color: rgba(0,0,0,0.7)
             }
-            
+
         }
 
         .search-input {
@@ -30,6 +33,9 @@
     }
 
     > .messages {
+      @media only screen and (max-width: 900px) {
+        width: 100%;
+      }
         width: 60%;
         padding: 24px;
         margin: 16px;
@@ -70,6 +76,9 @@
                 display: flex;
                 width: 100%;
                 justify-content: flex-start;
+              flex-direction: column;
+              align-content: flex-end;
+              align-items: flex-end;
 
                 > .chat-bubble {
                     background: white;
@@ -90,13 +99,40 @@
                         font-size: 0.7rem;
                         color: rgba(0,0,0,0.6);
                     }
+                  > .chat_img{
+                    background: white;
+                    padding-top: 8px;
+                    padding-bottom: 18px;
+                    padding-left: 8px;
+                    margin-bottom: 16px;
+                    border-radius: 8px;
+                    width: fit-content;
+
+                    position: relative;
+                    padding-right: 8px;
+                    &:before{
+                      content: " ";
+                      display: block;
+                      padding-top: 66.75%;
+                  }
+                      img{
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: fill;
+                        top: 0;
+                        left: 0;
+                      }
+                    }
+
+
                 }
-                
+
             }
 
             .chat-bubble-container.sender {
                 justify-content: flex-end;
-                
+
                 > .chat-bubble {
                     background: #c5cae9;
                 }
@@ -105,7 +141,6 @@
         }
 
         .input-area {
-            padding-top: 16px;
             padding-bottom: 8px;
         }
     }

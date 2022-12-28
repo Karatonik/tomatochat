@@ -88,6 +88,8 @@ export class ChatsService {
       concatMap((user) =>
         addDoc(ref, {
           text: message,
+          type: 'image',
+          src: 'https://images.pexels.com/photos/598917/pexels-photo-598917.jpeg',
           senderId: user?.uid,
           sentDate: today,
         })

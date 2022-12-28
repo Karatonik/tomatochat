@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
-  combineLatest,
+  combineLatest, concatMap, from,
   map,
   Observable,
   of,
@@ -13,6 +13,8 @@ import { Message } from 'src/app/models/chat';
 import { ProfileUser } from 'src/app/models/user-profile';
 import { ChatsService } from 'src/app/services/chats.service';
 import { UsersService } from 'src/app/services/users.service';
+import {getDownloadURL, ref, uploadBytes} from "@angular/fire/storage";
+import {MediaUploadService} from "../../services/media-upload.service";
 
 @Component({
   selector: 'app-home',
@@ -22,6 +24,10 @@ import { UsersService } from 'src/app/services/users.service';
 export class HomeComponent implements OnInit {
   @ViewChild('endOfChat')
   endOfChat!: ElementRef;
+  hiddenMessage= false;
+  hiddenMenu = false;
+  mobileFlag = false;
+  chatId ='';
 
   user$ = this.usersService.currentUserProfile$;
   myChats$ = this.chatsService.myChats$;
@@ -53,11 +59,14 @@ export class HomeComponent implements OnInit {
   ]).pipe(map(([value, chats]) => chats.find((c) => c.id === value[0])));
 
   constructor(
+    private imageUploadService: MediaUploadService,
     private usersService: UsersService,
     private chatsService: ChatsService
   ) {}
 
   ngOnInit(): void {
+    this.isMobile(window.innerWidth<900);
+
     this.messages$ = this.chatListControl.valueChanges.pipe(
       map((value) => value[0]),
       switchMap((chatId) => this.chatsService.getChatMessages$(chatId)),
@@ -65,6 +74,7 @@ export class HomeComponent implements OnInit {
         this.scrollToBottom();
       })
     );
+    this.chatListControl.valueChanges.subscribe(value => this.chatId= value[0]);
   }
 
   createChat(user: ProfileUser) {
@@ -103,5 +113,36 @@ export class HomeComponent implements OnInit {
         this.endOfChat.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
+  }
+
+  changeState() {
+    if(this.mobileFlag){
+    if(this.hiddenMessage ){
+      this.hiddenMenu = true;
+      this.hiddenMessage = false;
+    }else {
+      this.hiddenMenu = false;
+      this.hiddenMessage = true;
+    }
+    }
+  }
+  isMobile(value:boolean) {
+    if (value) {
+      this.mobileFlag = true;
+      this.hiddenMessage = true;
+      this.hiddenMenu = false;
+    } else {
+      this.mobileFlag = false;
+      this.hiddenMessage = false;
+      this.hiddenMenu = false;
+    }
+  }
+
+  uploadImage($event: Event) {// zapis // ma się wykonywać przy wysyłaniu wiadomosći
+        // @ts-ignore
+        let file = event.target.files[0];
+        this.imageUploadService
+          // @ts-ignore
+          .uploadImage(file, `images/chat/${this.chatId}/${file.name}`).subscribe();
   }
 }
