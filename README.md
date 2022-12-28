@@ -1,5 +1,8 @@
 
 ## Development server
+
+p:test4@test4.pl
+u:test4test4
 ng build
 npm start
 
