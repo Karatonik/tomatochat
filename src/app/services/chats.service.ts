@@ -79,7 +79,7 @@ export class ChatsService {
     );
   }
 
-  addChatMessage(chatId: string, message: string): Observable<any> {
+  addChatMessage(chatId: string, message: string, src: string, type: string): Observable<any> {
     const ref = collection(this.firestore, 'chats', chatId, 'messages');
     const chatRef = doc(this.firestore, 'chats', chatId);
     const today = Timestamp.fromDate(new Date());
@@ -88,8 +88,8 @@ export class ChatsService {
       concatMap((user) =>
         addDoc(ref, {
           text: message,
-          type: 'image',
-          src: 'https://images.pexels.com/photos/598917/pexels-photo-598917.jpeg',
+          type: type,
+          src: src,
           senderId: user?.uid,
           sentDate: today,
         })

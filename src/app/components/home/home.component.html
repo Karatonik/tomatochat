@@ -71,24 +71,48 @@
             [ngClass]="{ sender: message.senderId === currentUser.uid }"
             *ngFor="let message of messages"
           >
-            <div class="chat_img" *ngIf="message.type =='image'">
-              <a href="{{message.src}}"><button mat-icon-button style="position: relative;top:-50%; margin-right:16px"><mat-icon>menu</mat-icon></button></a>
-              <img  width="240px" src="{{message.src}}">
-            </div>
-            <br>
-            <div class="chat-bubble " >
+            <div class="chat_img" *ngIf="isMediaType(message.type,'image')" style="background: #c5cae9; padding: 8px;  border-radius: 8px;">
               {{ message.text }}
+              <a  href="{{message.src}}">
+              <div>
+                <img  width="240px" src="{{message.src}}">
+              </div>
+              </a>
+              <div class="chat-time-media">{{
+                message.sentDate | dateDisplay
+                }}</div>
+            </div>
+            <div class="chat_img" *ngIf="isMediaType(message.type,'video')" style="background: #c5cae9; padding: 8px;  border-radius: 8px;">
+              {{ message.text }}
+              <video   width="240px" controls>
+                <source src="{{message.src}}" type="{{message.type}}">
+              </video>
+              <div class="chat-time-media">{{
+                message.sentDate | dateDisplay
+                }}</div>
+            </div>
+            <div class="" *ngIf="isNotRecType(message.type)" style="background: #c5cae9; padding: 8px;  border-radius: 8px;">
+              {{ message.text }}<br>
+             <a href="{{message.src}}" >{{ message.type }}</a>
+              <div class="chat-time-media">{{
+                message.sentDate | dateDisplay
+                }}</div>
+            </div>
+            <div class="chat-bubble " *ngIf="isMediaType(message.type,'text')" >
+              <div [innerHTML]="wrapLinks(message.text)">
+              </div>
               <span class="chat-time" >{{
                 message.sentDate | dateDisplay
               }}</span>
             </div>
+            <br>
           </div>
         </ng-container>
       </ng-container>
       <div #endOfChat></div>
     </div>
     <div class="input-area">
-        <input type="file" (change)="uploadImage($event)" />
+        <input type="file" (change)="uploadImage($event)" *ngIf="chatId" />
       <mat-form-field appearance="outline">
         <input
           matInput

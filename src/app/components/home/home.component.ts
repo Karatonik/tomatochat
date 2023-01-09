@@ -28,6 +28,8 @@ export class HomeComponent implements OnInit {
   hiddenMenu = false;
   mobileFlag = false;
   chatId ='';
+  file : any;
+  urlRegex = /(https?:\/\/[^\s]+)/g;
 
   user$ = this.usersService.currentUserProfile$;
   myChats$ = this.chatsService.myChats$;
@@ -97,14 +99,33 @@ export class HomeComponent implements OnInit {
   sendMessage() {
     const message = this.messageControl.value;
     const selectedChatId = this.chatListControl.value[0];
-    if (message && selectedChatId) {
-      this.chatsService
-        .addChatMessage(selectedChatId, message)
-        .subscribe(() => {
-          this.scrollToBottom();
-        });
-      this.messageControl.setValue('');
+    let type = 'text';
+    if(this.file != null){
+      let type = this.file.type;
+      console.log(this.file.type);
+      this.imageUploadService
+        // @ts-ignore
+        .uploadImage(this.file, `images/chat/${this.chatId}/${this.file.name}`).subscribe(value => {
+        if (selectedChatId) {
+          this.chatsService
+            .addChatMessage(selectedChatId, message,value,type)
+            .subscribe(() => {
+              this.scrollToBottom();
+            });
+          this.messageControl.setValue('');
+        }
+      });
+    }else{
+      if (message && selectedChatId) {
+        this.chatsService
+          .addChatMessage(selectedChatId, message,'',type)
+          .subscribe(() => {
+            this.scrollToBottom();
+          });
+        this.messageControl.setValue('');
+      }
     }
+    this.file = null;
   }
 
   scrollToBottom() {
@@ -139,10 +160,34 @@ export class HomeComponent implements OnInit {
   }
 
   uploadImage($event: Event) {// zapis // ma się wykonywać przy wysyłaniu wiadomosći
+    // @ts-ignore
+    this.file = event.target.files[0];
         // @ts-ignore
         let file = event.target.files[0];
         this.imageUploadService
           // @ts-ignore
           .uploadImage(file, `images/chat/${this.chatId}/${file.name}`).subscribe();
   }
+  isMediaType(target: string,type: string){
+    if(typeof target !== 'undefined'){
+      return target.includes(type);
+    }
+   return  false;
+  }
+  isNotRecType(target: string){
+    if(typeof target !== 'undefined'){
+      if(target.includes('image') || target.includes('video')|| target.includes('text')){
+        return  false
+      }
+      return true;
+    }
+    return  false;
+  }
+    wrapLinks(text: string) {
+    return text.replace(this.urlRegex, (url) => {
+      return `<a href="${url}">${url}</a>`;
+    });
+  }
+
+
 }
